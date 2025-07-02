@@ -1,0 +1,27 @@
+name: Deploy Portfolio
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Check for required files
+        run: |
+          echo "Checking for index.html and style.css"
+          ls -la
+          test -f index.html
+          test -f style.css
+          echo "✅ Files are present."
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
