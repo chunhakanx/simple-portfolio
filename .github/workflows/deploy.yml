@@ -12,18 +12,7 @@ jobs:
       - name: Checkout repository # ขั้นตอนที่ 1: ดึงโค้ดจาก repository
         uses: actions/checkout@v3 # ใช้ action จาก GitHub เพื่อ checkout โค้ด
 
-      - name: Check required files # ขั้นตอนที่ 2: ตรวจสอบไฟล์ที่จำเป็น (สำหรับการดีบั๊ก/ยืนยัน)
-        run: |
-          echo "Checking for required files and directory structure..."
-          ls -R # แสดงโครงสร้างไฟล์และโฟลเดอร์ทั้งหมดแบบ recursive
-          test -f index.html # ตรวจสอบว่ามี index.html ที่ root
-          test -d css # ตรวจสอบว่ามีโฟลเดอร์ css
-          test -f css/style.css # ตรวจสอบว่ามี css/style.css
-          test -d js # ตรวจสอบว่ามีโฟลเดอร์ js
-          test -f js/main.js # ตรวจสอบว่ามี js/main.js
-          echo "File check complete."
-
-      - name: Deploy to GitHub Pages # ขั้นตอนที่ 3: Deploy ไปยัง GitHub Pages
+      - name: Deploy to GitHub Pages # ขั้นตอนที่ 2: Deploy ไปยัง GitHub Pages
         uses: peaceiris/actions-gh-pages@v3 # ใช้ action สำหรับ deploy ไปยัง GitHub Pages
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }} # ใช้ GitHub Token ที่มีให้โดยอัตโนมัติ
