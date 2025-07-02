@@ -1,27 +1,33 @@
-name: Deploy Portfolio
+name: Deploy Portfolio # ชื่อของ Workflow นี้
 
 on:
   push:
-    branches: [main]
+    branches: [main] # จะรัน workflow นี้เมื่อมีการ push ไปที่ branch 'main'
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # รันบน Ubuntu Linux เวอร์ชันล่าสุด
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout repository # ขั้นตอนที่ 1: ดึงโค้ดจาก repository
+        uses: actions/checkout@v3 # ใช้ action จาก GitHub เพื่อ checkout โค้ด
 
-      - name: Check required files
+      - name: Check required files # ขั้นตอนที่ 2: ตรวจสอบไฟล์ที่จำเป็น (สำหรับการดีบั๊ก/ยืนยัน)
         run: |
-          echo "Checking for required files..."
-          ls -la
-          test -f index.html
-          test -f style.css
+          echo "Checking for required files and directory structure..."
+          ls -R # แสดงโครงสร้างไฟล์และโฟลเดอร์ทั้งหมดแบบ recursive
+          test -f index.html # ตรวจสอบว่ามี index.html ที่ root
+          test -d css # ตรวจสอบว่ามีโฟลเดอร์ css
+          test -f css/style.css # ตรวจสอบว่ามี css/style.css
+          test -d js # ตรวจสอบว่ามีโฟลเดอร์ js
+          test -f js/main.js # ตรวจสอบว่ามี js/main.js
+          echo "File check complete."
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy to GitHub Pages # ขั้นตอนที่ 3: Deploy ไปยัง GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3 # ใช้ action สำหรับ deploy ไปยัง GitHub Pages
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: 
-          force_orphan true./
+          github_token: ${{ secrets.GITHUB_TOKEN }} # ใช้ GitHub Token ที่มีให้โดยอัตโนมัติ
+          publish_dir: ./ # ระบุว่าโฟลเดอร์ที่ต้องการ deploy คือโฟลเดอร์ปัจจุบัน (root ของ repository)
+          force_orphan: true # บังคับให้สร้าง commit ใหม่ที่ไม่เกี่ยวข้องกับประวัติเดิม (เหมาะสำหรับเว็บ static)
+          # cname: your-domain.com # ถ้าคุณมี Custom Domain ให้ uncomment บรรทัดนี้และใส่โดเมนของคุณ
+          # destination_dir: docs # หากคุณตั้งค่า GitHub Pages ให้ serve จากโฟลเดอร์ 'docs' ให้ uncomment ตรงนี้
