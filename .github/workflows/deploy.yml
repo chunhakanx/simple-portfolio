@@ -1,22 +1,31 @@
-name: Deploy Portfolio # ชื่อของ Workflow นี้
+name: Deploy Portfolio
 
 on:
   push:
-    branches: [main] # จะรัน workflow นี้เมื่อมีการ push ไปที่ branch 'main'
+    branches: [main]
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest # รันบน Ubuntu Linux เวอร์ชันล่าสุด
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository # ขั้นตอนที่ 1: ดึงโค้ดจาก repository
-        uses: actions/checkout@v3 # ใช้ action จาก GitHub เพื่อ checkout โค้ด
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Deploy to GitHub Pages # ขั้นตอนที่ 2: Deploy ไปยัง GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3 # ใช้ action สำหรับ deploy ไปยัง GitHub Pages
+      # เพิ่มขั้นตอนใหม่นี้เข้าไป (สำคัญ!)
+      - name: Setup Git for Deployment
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # ตรวจสอบว่า gh-pages branch มีอยู่หรือไม่ ถ้าไม่มี ให้สร้าง
+          git checkout gh-pages || git checkout -b gh-pages
+          git branch -M gh-pages # ตรวจสอบให้แน่ใจว่าชื่อ branch เป็น gh-pages
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # ใช้ GitHub Token ที่มีให้โดยอัตโนมัติ
-          publish_dir: ./ # ระบุว่าโฟลเดอร์ที่ต้องการ deploy คือโฟลเดอร์ปัจจุบัน (root ของ repository)
-          force_orphan: true # บังคับให้สร้าง commit ใหม่ที่ไม่เกี่ยวข้องกับประวัติเดิม (เหมาะสำหรับเว็บ static)
-          # cname: your-domain.com # ถ้าคุณมี Custom Domain ให้ uncomment บรรทัดนี้และใส่โดเมนของคุณ
-          # destination_dir: docs # หากคุณตั้งค่า GitHub Pages ให้ serve จากโฟลเดอร์ 'docs' ให้ uncomment ตรงนี้
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          force_orphan: true
+          # cname: your-domain.com
+          # destination_dir: docs
