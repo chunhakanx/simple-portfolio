@@ -9,16 +9,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Check for required files
+      - name: Check required files
         run: |
-          echo "Checking for index.html and style.css"
+          echo "Checking for required files..."
           ls -la
           test -f index.html
           test -f style.css
-          echo "✅ Files are present."
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
