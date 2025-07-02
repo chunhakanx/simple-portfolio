@@ -1,4 +1,4 @@
-name: Deploy Portfolio
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -6,32 +6,28 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+  runs-on: ubuntu-latest
+  
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    steps:
-      - name: Checkout repository # ขั้นตอนที่ 1: ดึงโค้ดจาก repository
-        uses: actions/checkout@v4 # ใช้ actions/checkout@v4
-
-      - name: Debug - List Files Before Deploy # ขั้นตอน Debug: แสดงไฟล์ทั้งหมดก่อน deploy
+        - name: Check file structure
         run: |
-          echo "Listing files in current directory (should be root of repo):"
-          pwd # แสดง current working directory
-          ls -la # แสดงไฟล์และโฟลเดอร์ใน current directory
-          echo ""
-          echo "Listing files in 'css' directory:"
-          ls -la css/
-          echo ""
-          echo "Listing files in 'js' directory:"
-          ls -la js/
-          echo ""
-          echo "Is .git directory present?"
-          ls -la .git/ # ตรวจสอบว่า .git folder มีอยู่หรือไม่
+          ls -la
+          test -f index.html
+          test -f style.css
+          echo "Basic file check passed."
 
-      - name: Deploy to GitHub Pages # ขั้นตอนที่ 2: Deploy
-        uses: peaceiris/actions-gh-pages@v4 # ใช้ peaceiris/actions-gh-pages@v4
+            - name: Setup Node.js (optional for JS tools)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+          
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./ # ยังคงชี้ไปที่ root directory
-          force_orphan: true
-          # cname: your-domain.com
-          # destination_dir: docs
+          publish_dir: ./
+          force_orphan:true
