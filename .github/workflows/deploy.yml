@@ -1,4 +1,4 @@
-name: Deploy Portfolio
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -10,22 +10,23 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # เพิ่มขั้นตอนใหม่นี้เข้าไป (สำคัญ!)
-      - name: Setup Git for Deployment
+      - name: Check file structure
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          # ตรวจสอบว่า gh-pages branch มีอยู่หรือไม่ ถ้าไม่มี ให้สร้าง
-          git checkout gh-pages || git checkout -b gh-pages
-          git branch -M gh-pages # ตรวจสอบให้แน่ใจว่าชื่อ branch เป็น gh-pages
+          ls -la
+          test -f index.html
+          test -f style.css
+          echo "Basic file check passed."
+
+      - name: Setup Node.js (optional for JS tools)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
-          force_orphan: true
-          # cname: your-domain.com
-          # destination_dir: docs
+          force_orphan: true 
