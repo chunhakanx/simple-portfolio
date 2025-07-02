@@ -2,27 +2,24 @@ name: Deploy Portfolio
 
 on:
   push:
-    branches: [main]  # ✅ ทำงานเมื่อ push ไปที่ branch main
+    branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      # ✅ ขั้นตอนทดสอบว่าไฟล์อยู่จริง
-      - name: 🔍 Test for required files
+      - name: Check required files
         run: |
-          echo "เริ่มทดสอบว่าไฟล์ index.html และ style.css มีอยู่จริงหรือไม่"
+          echo "Checking for required files..."
           ls -la
           test -f index.html
           test -f style.css
-          echo "✅ ไฟล์อยู่ครบแล้ว!"
 
-      # ✅ ขั้นตอน Deploy ถ้าผ่านการทดสอบ
-      - name: 🚀 Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
