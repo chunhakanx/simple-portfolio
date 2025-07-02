@@ -1,32 +1,33 @@
-name: Deploy to GitHub Pages
+name: Deploy Portfolio
 
 on:
   push:
-    branches: [main]
+    branches: [main] # รันเมื่อมีการ push ไปที่ main branch
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # รันบน Ubuntu Linux เวอร์ชันล่าสุด
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repository # ขั้นตอนที่ 1: ดึงโค้ดจาก repository
+        uses: actions/checkout@v4 # ใช้ actions/checkout@v4 (เวอร์ชันล่าสุด)
 
-      - name: Check file structure
+      - name: Deploy to GitHub Pages # ขั้นตอนที่ 2: Deploy
+        uses: peaceiris/actions-gh-pages@v4 # ใช้ peaceiris/actions-gh-pages@v4 (เวอร์ชันล่าสุด)
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # ใช้ GitHub Token
+          publish_dir: ./ # ระบุโฟลเดอร์ที่ต้องการ publish (root ของ repo)
+          # force_orphan: true # ตัวนี้เราจะลองลบออกก่อน เพื่อดูว่ามันเป็นสาเหตุไหม
+          # ถ้าหากว่าเคย deploy สำเร็จแล้ว และอยากลบประวัติของ gh-pages branch ทุกครั้ง
+          # ค่อยกลับมาใส่ force_orphan: true
+          # cname: your-domain.com # ถ้ามี Custom Domain ให้ uncomment
+          # destination_dir: docs # ถ้า GitHub Pages serve จากโฟลเดอร์อื่น ให้ uncomment
+
+      - name: Debug Output # ขั้นตอนเพิ่มเติมสำหรับ Debugging (จะรันหลัง deploy)
+        if: failure() # รันเฉพาะเมื่อ Job ล้มเหลว
         run: |
-          ls -la
-          test -f index.html
-          test -f style.css
-          echo "Basic file check passed."
-
-      - name: Setup Node.js (optional for JS tools)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          force_orphan: true 
+          echo "Deployment failed. Checking logs for more details..."
+          git status # ตรวจสอบสถานะ Git
+          git log -1 # ตรวจสอบ Git log ล่าสุด
+          echo "Files in current directory:"
+          ls -laR # แสดงไฟล์ทั้งหมดใน directory
