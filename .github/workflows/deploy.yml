@@ -1,4 +1,4 @@
-name: Deploy Portfolio
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -9,14 +9,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository # ขั้นตอนที่ 1: ดึงโค้ดจาก repository
-        uses: actions/checkout@v4 # ใช้ actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Deploy to GitHub Pages # ขั้นตอนที่ 2: Deploy
-        uses: peaceiris/actions-gh-pages@v4 # ใช้ peaceiris/actions-gh-pages@v4
+      - name: Check file structure
+        run: |
+          ls -la
+          test -f index.html
+          test -f style.css
+          echo "Basic file check passed."
+
+      - name: Setup Node.js (optional for JS tools)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./ # ตรวจสอบให้แน่ใจว่า "./" ชี้ไปที่โฟลเดอร์ที่ถูกต้อง
-          force_orphan: true # ใส่กลับคืนมาเพื่อให้ deploy สะอาด
-          # cname: your-domain.com
-          # destination_dir: docs
+          publish_dir: ./
+          force_orphan: true
